@@ -1,0 +1,65 @@
+paper:
+  slug: large-scale-fully-unsupervised-re-identification
+  title: "Large-scale Fully-Unsupervised Re-Identification"
+  doi: "10.1109/TBIOM.2024.3446964"
+device: cuda
+data:
+  root: ../../datasets/market1501
+  height: 256
+  width: 128
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  random_erasing: true
+  num_workers: 4
+model:
+  backbone: resnet50
+  backbones: [resnet50]
+  feat_dim: 2048
+  pretrained: true
+barlow:
+  epochs: 15
+  batch_size: 64
+  lr: 0.000035
+  weight_decay: 0.0000015
+  lambda_bt: 0.005
+  projector_dim: 2048
+train:
+  epochs: 40
+  lr: 0.00035
+  lr_start: 0.000035
+  warmup_epochs: 10
+  weight_decay: 0.0005
+  tau: 0.04
+  lambda_hard: 0.5
+  num_pids: 16
+  num_instances: 12
+  num_repeats: 5
+  seed: 42
+  # 0.999 left eval ≈ ImageNet for 40 ep (sup smoke: student 57% vs ema 1%)
+  ema_beta: 0.9
+  proxy_mode: centroid
+clustering:
+  k: 20
+  use_lrr: true
+  lns_every: 3
+  lns_p: 1.0
+  # Keep mid-training ε from over-merging (v4: C 513→176 at eps→0.80)
+  eps_max: 0.72
+  eps_min: 0.62
+  min_samples: 4
+  max_noise_frac: 0.65
+  eps_adapt_cap: 0.78
+  eps_adapt_step: 0.02
+  # Drop mono-camera clusters (v3: cam_dom≈0.78 → mAP stuck at ImageNet ~3%)
+  min_cams_per_cluster: 2
+  total_epochs: 40
+eval:
+  batch_size: 64
+  ranks: [1, 5, 10]
+  every: 10
+  model: student
+paths:
+  checkpoint_dir: outputs/checkpoints
+  log_dir: outputs/logs
+  pred_dir: outputs/predictions
+  figure_dir: outputs/figures

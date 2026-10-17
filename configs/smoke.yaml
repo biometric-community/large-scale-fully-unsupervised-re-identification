@@ -1,0 +1,58 @@
+paper:
+  slug: large-scale-fully-unsupervised-re-identification
+  title: "Large-scale Fully-Unsupervised Re-Identification"
+  doi: "10.1109/TBIOM.2024.3446964"
+device: cuda
+data:
+  root: ../../datasets/market1501
+  height: 256
+  width: 128
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+  random_erasing: true
+  num_workers: 2
+  max_train_samples: 1024
+  max_eval_samples: 512
+model:
+  backbone: resnet50
+  backbones: [resnet50]
+  feat_dim: 2048
+  pretrained: true
+barlow:
+  epochs: 1
+  batch_size: 32
+  lr: 0.000035
+  lambda_bt: 0.005
+  projector_dim: 512
+  max_steps: 30
+train:
+  epochs: 2
+  lr: 0.00035
+  lr_start: 0.000035
+  warmup_epochs: 1
+  weight_decay: 0.0005
+  tau: 0.04
+  lambda_hard: 0.5
+  num_pids: 8
+  num_instances: 4
+  seed: 42
+  ema_beta: 0.999
+  max_steps: 40
+clustering:
+  k: 10
+  use_lrr: false
+  lns_every: 1
+  lns_p: 1.0
+  eps_max: 0.65
+  eps_min: 0.50
+  min_samples: 2
+  total_epochs: 2
+eval:
+  batch_size: 32
+  ranks: [1, 5, 10]
+  every: 2
+paths:
+  checkpoint_dir: outputs/checkpoints
+  log_dir: outputs/logs
+  pred_dir: outputs/predictions
+  figure_dir: outputs/figures
