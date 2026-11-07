@@ -1,0 +1,17 @@
+# Published values from Bertocco, Andalo, Boult & Rocha, "Large-scale Fully-Unsupervised
+# Re-Identification", IEEE TBIOM 2024, arXiv:2307.14278.
+source: arXiv:2307.14278
+tolerance_pp: 1.0
+
+# Table II, Ours (100%), Market1501.
+market1501:
+  map: 85.8
+  rank1: 94.0
+
+# Sec. IV implementation details.
+training:
+  tau: 0.04
+  lambda_hard: 0.5
+  num_pids: 16
+  num_instances: 12
+  num_repeats: 5
