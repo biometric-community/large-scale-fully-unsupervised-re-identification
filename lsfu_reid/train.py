@@ -217,7 +217,7 @@ def cluster_subset(
     while float((labels < 0).mean()) > max_noise and eps + 1e-9 < eps_cap:
         eps = min(eps_cap, eps + eps_step)
         labels = cluster_dbscan(dist, eps=eps, min_samples=min_samples)
-    min_cams = int(cfg["clustering"].get("min_cams_per_cluster", 2))
+    min_cams = int(cfg["clustering"].get("min_cams_per_cluster", 1))
     if camids is not None and min_cams > 1:
         before = int((labels >= 0).sum())
         labels = filter_monocamera_clusters(labels, camids, min_cams=min_cams)
@@ -523,25 +523,25 @@ def main(argv=None):
                 f"mAP={metrics['mAP']:.2f} R1={metrics['Rank-1']:.2f}",
                 flush=True,
             )
-            if metrics["mAP"] > best["mAP"]:
-                # Drop bulky CMC vector from summary JSON
-                best = {
-                    k: metrics[k]
-                    for k in metrics
-                    if k != "cmc"
-                }
-                best["epoch"] = epoch + 1
-                best["eval_model"] = row["eval_model"]
-                torch.save(
-                    {
-                        "models": [m.state_dict() for m in models],
-                        "emas": [e.state_dict() for e in emas],
-                        "epoch": epoch + 1,
-                        "best": best,
-                        "cfg": cfg,
-                    },
-                    ckpt_dir / "best.pt",
-                )
+            # No validation split: keep the latest checkpoint, not the best on the test set
+            # Drop bulky CMC vector from summary JSON
+            best = {
+                k: metrics[k]
+                for k in metrics
+                if k != "cmc"
+            }
+            best["epoch"] = epoch + 1
+            best["eval_model"] = row["eval_model"]
+            torch.save(
+                {
+                    "models": [m.state_dict() for m in models],
+                    "emas": [e.state_dict() for e in emas],
+                    "epoch": epoch + 1,
+                    "best": best,
+                    "cfg": cfg,
+                },
+                ckpt_dir / "best.pt",
+            )
 
         history.append(row)
         print(

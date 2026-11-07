@@ -50,8 +50,8 @@ clustering:
   max_noise_frac: 0.65
   eps_adapt_cap: 0.78
   eps_adapt_step: 0.02
-  # Drop mono-camera clusters (v3: cam_dom≈0.78 → mAP stuck at ImageNet ~3%)
-  min_cams_per_cluster: 2
+  # 1 disables the camera filter: the paper does not rely on camera labels
+  min_cams_per_cluster: 1
   total_epochs: 40
 eval:
   batch_size: 64

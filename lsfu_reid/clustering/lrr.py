@@ -66,12 +66,9 @@ def local_re_ranking(
             sj_i = float(dloc_full[j, list(e_j)].sum()) if e_j else 0.0
             denom = s_max + si_j + sj_i
             d_iou = (s_min / denom) if denom > 0 else 0.0
-            # Reciprocal: full Jaccard credit. Non-reciprocal: half credit so
-            # DBSCAN can still chain early-training neighborhoods (eps~0.6–0.75).
+            # Eq. (8): non-reciprocal neighbours keep the initial distance of 1
             if i in nj:
                 R[i, t] = 1.0 - d_iou
-            else:
-                R[i, t] = 1.0 - 0.5 * d_iou
 
     if not return_full_distance:
         return idx, R

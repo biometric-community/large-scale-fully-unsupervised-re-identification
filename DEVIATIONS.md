@@ -10,8 +10,6 @@ Every row is referenced from `FIDELITY_AUDIT.md`.
 | D3 | FAISS for k-NN / clustering support | **sklearn `NearestNeighbors` + `DBSCAN(metric=precomputed)`** | No FAISS dependency; equivalent clustering API |
 | D4 | Exact ε_min / ε_max numeric endpoints (Fig. 2 qualitative) | `eps_min=0.65`, `eps_max=0.80` + adaptive raise if noise>55% (cap 0.92, step 0.03); `min_samples=2` | Supp. omits endpoints; 0.45–0.60 and later 0.58–0.75@85% still left ~80% noise / mAP~1.5; retuned to keep ≥45% labeled |
 | D11 | Barlow Twins warmup length | **15 epochs** (was 3) on Market train | Short BT left near-isotropic embeddings; longer SSL before DBSCAN |
-| D12 | LRR non-reciprocal distance | Soft `1−0.5·d_IoU` (vs hard 1.0) + cosine k-NN | Stabilizes DBSCAN chaining under early weak neighborhoods |
-| D13 | No explicit camera constraint in clustering | Drop clusters with `<2` cameras (`min_cams_per_cluster=2`) | v3: purity~0.66 but cam_dom~0.78; Market same-cam removal → mAP≈ImageNet (~3%); multi-cam filter for cross-cam learning |
 | D14 | Contaminated SSL init | Fresh Barlow from ImageNet each full run (do not reuse mid-train EMA as BT) | v3 `barlow.pt` was EMA after bad unsupervised steps |
 | D15 | Backbone head | **BNNeck** (BatchNorm1d) before L2 | Standard ReID practice (Luo et al.); stabilizes proxy CE; not explicit in paper extract |
 | D16 | Proxy selection | **Cluster centroid** (L2-normalized mean); `proxy_mode: random` available | Paper says random exemplar; centroid more stable under moderate purity |

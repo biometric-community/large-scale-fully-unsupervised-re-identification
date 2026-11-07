@@ -65,6 +65,8 @@ class Market1501(Dataset):
         elif split in ("gallery", "test"):
             folder = self.root / "bounding_box_test"
             paths = sorted(folder.glob("*.jpg"))
+            # id -1 images are junk the protocol ignores; id 0 distractors stay
+            paths = [p for p in paths if parse_market_name(p.name)[0] != -1]
         else:
             raise ValueError(split)
         if max_samples is not None:
